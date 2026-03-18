@@ -1,0 +1,126 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Outbox Pattern documentation",
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080/api",
+            "description": "API Server"
+        }
+    ],
+    "paths": {
+        "/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register by password",
+                "operationId": "register",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterRequestDoc"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponseDoc"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "RegisterRequestDoc": {
+                "title": "Register Request",
+                "required": [
+                    "email",
+                    "name",
+                    "password",
+                    "password_confirmation"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Name",
+                        "type": "string",
+                        "example": "Test"
+                    },
+                    "surname": {
+                        "description": "Surname",
+                        "type": "string",
+                        "example": "Test",
+                        "nullable": true
+                    },
+                    "email": {
+                        "description": "Email",
+                        "type": "string",
+                        "example": "dani@gmail.com"
+                    },
+                    "password": {
+                        "description": "Пароль",
+                        "type": "string",
+                        "example": "password"
+                    },
+                    "password_confirmation": {
+                        "description": "Пароль",
+                        "type": "string",
+                        "example": "password"
+                    }
+                },
+                "type": "object"
+            },
+            "UserResponseDoc": {
+                "title": "User Response",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Name",
+                        "type": "string",
+                        "example": "Test"
+                    },
+                    "email": {
+                        "description": "Email",
+                        "type": "string",
+                        "example": "dani@gmail.com"
+                    },
+                    "surname": {
+                        "description": "Surname",
+                        "type": "string",
+                        "example": "Some",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Auth"
+        }
+    ]
+}

@@ -32,6 +32,22 @@ services:
       - db
     networks:
       - laravel
+  scheduler:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    container_name: scheduler
+    working_dir: /var/www/outbox_app
+    environment:
+      XDEBUG_MODE: off
+    command: php artisan schedule:work
+    volumes:
+      - .:/var/www/outbox_app
+    depends_on:
+      - app
+    networks:
+      - laravel
+    restart: unless-stopped
   db:
     image: postgres:15
     container_name: postgres_db
@@ -45,14 +61,12 @@ services:
       - "5432:5432"
     networks:
       - laravel
-
   redis:
     image: redis:alpine
     container_name: redis
     networks:
       - laravel
 volumes:
-  otus_five_app:
   pgdata:
 
 networks:
