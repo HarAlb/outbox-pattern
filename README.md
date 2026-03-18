@@ -1,59 +1,66 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Outbox Pattern Implementation
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Что это?
 
-## About Laravel
+**Outbox паттерн** - это способ надежной обработки событий в приложении.
+Вместо того чтобы сразу отправлять события (в RabbitMQ, другуе сервисы и т.д.),
+мы сохраняем их в базу данных (таблицу `outbox_messages`) и обрабатываем
+отдельным воркером.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Зачем это нужно?
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 📦 **Гарантированная доставка**
+Если после регистрации пользователя упадет сервер, событие не потеряется -
+оно уже в базе данных и будет обработано при следующем запуске.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 🔄 **Повторные попытки (Retry)**
+Если обработчик события упал с ошибкой (например, бонусный сервис временно недоступен),
+воркер автоматически попробует снова (поле `attempts`).
 
-## Learning Laravel
+### 🚦 **Контроль нагрузки**
+События обрабатываются пачками, можно контролировать скорость обработки.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 🔍 **Отладка и мониторинг**
+Все события хранятся в таблице, можно легко найти проблемное событие и
+посмотреть что пошло не так.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Как это работает?
 
-## Laravel Sponsors
+### Схема работы:
+1 ) Событие (UserRegistered) → Сохраняется в outbox_messages
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+2) OutboxWorker (каждую секунду) → Забирает новые события
 
-### Premium Partners
+3) Dispatcher → Находит нужный Listener по типу события
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+4) Listener → Выполняет бизнес-логику (начисление бонусов)
 
-## Contributing
+### Структура таблицы outbox_messages:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Поле | Описание |
+|------|----------|
+| `id` | Уникальный ID события |
+| `type` | Тип события (например, "UserRegistered") |
+| `payload` | Данные события в JSON (userId, email и т.д.) |
+| `attempts` | Сколько раз пытались обработать |
+| `error` | Ошибка при последней попытке |
+| `processed` | Обработано успешно |
+| `failed` | Окончательно провалено |
+| `occurred_at` | Когда произошло событие |
+| `aggregate_id` | ID сущности (например, user_id) |
+| `correlation_id` | ID всей бизнес-операции |
 
-## Code of Conduct
+## Команды для работы
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Запуск воркера (обработчика событий)
+```bash
+php artisan outbox:work
+# Опции:
+# --sleep=1  - спать 1 секунду если нет событий
+# --limit=100 - обработать 100 событий и выйти
+```
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Мониторинг outbox
+```bash
+php artisan outbox:monitor --stats
+```
