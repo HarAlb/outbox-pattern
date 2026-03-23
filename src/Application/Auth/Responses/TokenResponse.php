@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Src\Application\Auth\Responses;
 
-final class TokenResponse
+final class TokenResponse implements \JsonSerializable
 {
     public string $accessToken;
 
@@ -12,17 +12,28 @@ final class TokenResponse
 
     public string $refreshToken;
 
-    public string $expiresAt;
+    public string $refreshExpiresAt;
 
     public function __construct(
         string $accessToken,
         string $accessExpiresAt,
         string $refreshToken,
-        string $expiresAt
+        string $refreshExpiresAt
     ) {
         $this->accessToken = $accessToken;
         $this->refreshToken = $refreshToken;
-        $this->expiresAt = $expiresAt;
+        $this->refreshExpiresAt = $refreshExpiresAt;
         $this->accessExpiresAt = $accessExpiresAt;
+    }
+
+    #[\Override]
+    public function jsonSerialize(): mixed
+    {
+        return [
+            'access_token' => $this->accessToken,
+            'access_expired_at' => $this->accessExpiresAt,
+            'refresh_token' => $this->refreshToken,
+            'refresh_expired_at' => $this->refreshExpiresAt,
+        ];
     }
 }

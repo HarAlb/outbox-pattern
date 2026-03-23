@@ -9,7 +9,7 @@ final class OutboxMessage
     public function __construct(
         public readonly int $id,
         public readonly string $eventType,
-        public readonly string $payload,
+        public readonly array $payload,
         public readonly \DateTimeImmutable $occurredAt,
         public int $attempts = 0,
         public ?string $error = null,

@@ -261,7 +261,16 @@ return [
     |
     */
 
+    'user' => [
+        'model' => \Src\Domain\User\Entities\User::class,
+    ],
+
     'providers' => [
+
+        'users' => [
+            'driver' => 'custom',
+            'model' => \Src\Domain\User\Entities\User::class,
+        ],
 
         /*
         |--------------------------------------------------------------------------

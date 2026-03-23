@@ -21,7 +21,6 @@ services:
     volumes:
       - .:/var/www/outbox_app
     environment:
-      APP_ENV: dev
       PHP_IDE_CONFIG: "serverName=outbox-test-ab"
       XDEBUG_MODE: debug
     entrypoint: /usr/local/bin/entrypoint.sh

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Src\Domain\UserBonus\Listeners;
 
-use Illuminate\Support\Facades\Log;
 use Src\Domain\User\Events\UserRegistered;
 use Src\Domain\UserBonus\Entities\Bonus;
 use Src\Domain\UserBonus\Repositories\UserBonusesRepository;
@@ -15,8 +14,8 @@ final class GiveRegistrationBonusListener
 
     public function handle(UserRegistered $event): void
     {
-        $bonus = new Bonus($event->userId, 100);
-        Log::info('HELOOO');
+        $bonus = new Bonus($event->getUserId()->getValue(), 100);
+
         $this->repository->add($bonus);
     }
 }

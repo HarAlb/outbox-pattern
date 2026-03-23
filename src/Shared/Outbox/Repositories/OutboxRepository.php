@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Src\Shared\Outbox\Repositories;
 
+use Src\Shared\Events\DomainEvent;
 use Src\Shared\Outbox\Entities\OutboxMessage;
 
 interface OutboxRepository
 {
-    public function store(object $event, ?string $aggregateId = null, ?string $correlationId = null): void;
+    public function store(DomainEvent $event, ?string $aggregateId = null, ?string $correlationId = null): void;
 
     public function fetchNext(): ?OutboxMessage;
 
