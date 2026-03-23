@@ -34,17 +34,94 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/UserResponseDoc"
+                                    "$ref": "#/components/schemas/AuthResponseDoc"
                                 }
                             }
                         }
                     }
                 }
             }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login by password",
+                "operationId": "login",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequestDoc"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthResponseDoc"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/profile": {
+            "get": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Get profile",
+                "operationId": "getProfile",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponseDoc"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
         "schemas": {
+            "LoginRequestDoc": {
+                "title": "Login Request",
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "email": {
+                        "description": "Email",
+                        "type": "string",
+                        "example": "dani@gmail.com"
+                    },
+                    "password": {
+                        "description": "Пароль",
+                        "type": "string",
+                        "example": "password"
+                    }
+                },
+                "type": "object"
+            },
             "RegisterRequestDoc": {
                 "title": "Register Request",
                 "required": [
@@ -79,6 +156,45 @@
                         "description": "Пароль",
                         "type": "string",
                         "example": "password"
+                    }
+                },
+                "type": "object"
+            },
+            "AuthResponseDoc": {
+                "title": "Auth Response",
+                "properties": {
+                    "user": {
+                        "$ref": "#/components/schemas/UserResponseDoc"
+                    },
+                    "token": {
+                        "$ref": "#/components/schemas/TokenResponseDoc"
+                    }
+                },
+                "type": "object"
+            },
+            "TokenResponseDoc": {
+                "title": "Token Response",
+                "description": "Response containing authentication tokens",
+                "properties": {
+                    "access_token": {
+                        "description": "JWT access token",
+                        "type": "string",
+                        "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAiLCJpYXQiOjE3MTA4OTYwMDAsImV4cCI6MTcxMDg5OTYwMCwidHlwZSI6ImFjY2VzcyIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSJ9.abc123..."
+                    },
+                    "access_expires_at": {
+                        "description": "Access token expiration timestamp (ISO 8601 format)",
+                        "type": "string",
+                        "example": "2024-03-20T10:30:00Z"
+                    },
+                    "refresh_token": {
+                        "description": "JWT refresh token (used to obtain new access token)",
+                        "type": "string",
+                        "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAiLCJpYXQiOjE3MTA4OTYwMDAsImV4cCI6MTcxMDk4MjQwMCwidHlwZSI6InJlZnJlc2gifQ.xyz789..."
+                    },
+                    "refresh_expires_at": {
+                        "description": "Refresh token expiration timestamp (ISO 8601 format)",
+                        "type": "string",
+                        "example": "2024-03-21T10:30:00Z"
                     }
                 },
                 "type": "object"
@@ -121,6 +237,10 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Profile",
+            "description": "Profile"
         }
     ]
 }

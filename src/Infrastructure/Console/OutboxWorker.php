@@ -36,7 +36,6 @@ class OutboxWorker extends Command
         while (true) {
             try {
                 $message = $this->outbox->fetchNext();
-
                 if (! $message) {
                     if ($limit > 0 && $processed >= $limit) {
                         break;

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Src\Infrastructure\Persistence;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Src\Shared\Events\DomainEvent;
 use Src\Shared\Outbox\Entities\OutboxMessage;
 use Src\Shared\Outbox\Repositories\OutboxRepository;
 
@@ -13,11 +15,11 @@ final class DatabaseOutboxRepository implements OutboxRepository
     private const MAX_RETRY_ATTEMPTS = 3;
 
     #[\Override]
-    public function store(object $event, ?string $aggregateId = null, ?string $correlationId = null): void
+    public function store(DomainEvent $event, ?string $aggregateId = null, ?string $correlationId = null): void
     {
         DB::table('outbox_messages')->insert([
             'type' => get_class($event),
-            'payload' => json_encode($event),
+            'payload' => json_encode($event->toArray()),
             'aggregate_id' => $aggregateId,
             'correlation_id' => $correlationId ?? $this->generateCorrelationId(),
             'occurred_at' => now(),
@@ -160,10 +162,12 @@ final class DatabaseOutboxRepository implements OutboxRepository
 
     private function mapToEntity($row): OutboxMessage
     {
+        Log::info('asdad');
+
         return new OutboxMessage(
             id: $row->id,
             eventType: $row->type,
-            payload: $row->payload,
+            payload: json_decode($row->payload, true),
             occurredAt: new \DateTimeImmutable($row->occurred_at),
             attempts: (int) $row->attempts,
             error: $row->error,

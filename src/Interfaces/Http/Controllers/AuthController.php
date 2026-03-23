@@ -7,14 +7,18 @@ namespace Src\Interfaces\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OAT;
+use Src\Application\Auth\LoginCommand;
 use Src\Application\Auth\RegisterCommand;
+use Src\Application\Auth\UseCases\LoginUser;
 use Src\Application\Auth\UseCases\RegisterUser;
+use Src\Interfaces\Http\Requests\LoginRequest;
 use Src\Interfaces\Http\Requests\RegisterRequest;
 
 final class AuthController extends Controller
 {
     public function __construct(
-        private readonly RegisterUser $registerUser
+        private readonly RegisterUser $registerUser,
+        private readonly LoginUser $loginUser
     ) {}
 
     #[
@@ -33,7 +37,7 @@ final class AuthController extends Controller
                 new OAT\Response(
                     response: 200,
                     description: 'OK',
-                    content: new OAT\JsonContent(ref: '#/components/schemas/UserResponseDoc')
+                    content: new OAT\JsonContent(ref: '#/components/schemas/AuthResponseDoc')
                 ),
             ]
         )
@@ -49,9 +53,39 @@ final class AuthController extends Controller
 
         $result = $this->registerUser->execute($command);
 
-        return response()->json([
-            'user' => $result['user'],
-            'token' => $result['token'],
-        ]);
+        return response()->json($result);
+    }
+
+    #[
+        OAT\Post(
+            path: '/auth/login',
+            operationId: 'login',
+            summary: 'Login by password',
+            requestBody: new OAT\RequestBody(
+                required: true,
+                content: new OAT\JsonContent(
+                    ref: '#/components/schemas/LoginRequestDoc'
+                )
+            ),
+            tags: ['Auth'],
+            responses: [
+                new OAT\Response(
+                    response: 200,
+                    description: 'OK',
+                    content: new OAT\JsonContent(ref: '#/components/schemas/AuthResponseDoc')
+                ),
+            ]
+        )
+    ]
+    public function login(LoginRequest $request): JsonResponse
+    {
+        $command = new LoginCommand(
+            $request->email,
+            $request->password,
+        );
+
+        $result = $this->loginUser->execute($command);
+
+        return response()->json($result);
     }
 }

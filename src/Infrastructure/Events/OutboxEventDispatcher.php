@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace Src\Infrastructure\Events;
 
 use Illuminate\Contracts\Container\Container;
+use Src\Domain\Common\ValueObject\Id;
+use Src\Domain\User\Entities\ValueObject\Email;
+use Src\Domain\User\Events\UserRegistered;
 use Src\Infrastructure\Logging\OutboxLogger;
+use Src\Shared\Events\DomainEvent;
 use Src\Shared\Outbox\Entities\OutboxMessage;
 
 final class OutboxEventDispatcher
@@ -25,10 +29,13 @@ final class OutboxEventDispatcher
     public function dispatch(OutboxMessage $message): void
     {
         try {
-            $data = json_decode($message->payload, true);
+            $payload = $message->payload;
 
-            if (! $data) {
-                $this->logger->error('Invalid payload format - not JSON');
+            if (empty($payload)) {
+                $this->logger->error('Invalid payload format - empty payload', [
+                    'message_id' => $message->id,
+                    'event_type' => $message->eventType,
+                ]);
 
                 return;
             }
@@ -36,35 +43,41 @@ final class OutboxEventDispatcher
             $eventClass = $message->eventType;
 
             if (! $eventClass) {
-                $this->logger->error('Payload missing type field', ['payload' => $data]);
+                $this->logger->error('Event type is empty', [
+                    'message_id' => $message->id,
+                    'payload' => $payload,
+                ]);
 
                 return;
             }
 
             if (! isset($this->listeners[$eventClass])) {
-                $this->logger->warning("No listener for event: {$eventClass}");
+                $this->logger->warning("No listener for event: {$eventClass}", [
+                    'message_id' => $message->id,
+                    'available_listeners' => array_keys($this->listeners),
+                ]);
 
                 return;
             }
+
+            $event = $this->reconstructEvent($message);
 
             $listenerClass = $this->listeners[$eventClass];
             $listener = $this->container->make($listenerClass);
 
-            // Воссоздаем событие
-            $event = $this->reconstituteEvent($eventClass, $data);
-
-            if (! $event) {
-                $this->logger->error("Failed to reconstitute event: {$eventClass}");
+            if (! method_exists($listener, 'handle')) {
+                $this->logger->error("Listener {$listenerClass} does not have handle method");
 
                 return;
             }
 
-            // Вызываем listener
             $listener->handle($event);
 
-            $this->logger->info('Event dispatched', [
+            $this->logger->info('Event dispatched successfully', [
+                'message_id' => $message->id,
                 'event' => $eventClass,
                 'listener' => $listenerClass,
+                'aggregate_id' => $message->aggregateId,
             ]);
 
         } catch (\Throwable $e) {
@@ -73,44 +86,29 @@ final class OutboxEventDispatcher
         }
     }
 
-    private function reconstituteEvent(string $eventClass, array $data): ?object
+    private function reconstructEvent(OutboxMessage $message): DomainEvent
     {
-        if (! class_exists($eventClass)) {
-            $this->logger->error("Event class does not exist: {$eventClass}");
+        return match ($message->eventType) {
+            UserRegistered::class => $this->reconstructUserRegistered($message->payload),
+            default => throw new \RuntimeException("Unknown event type: {$message->eventType}")
+        };
+    }
 
-            return null;
+    private function reconstructUserRegistered(array $payload): UserRegistered
+    {
+        $event = new UserRegistered(
+            new Id($payload['user_id']),
+            new Email($payload['email'])
+        );
+
+        if (isset($payload['ip_address'])) {
+            $event->setIpAddress($payload['ip_address']);
         }
 
-        if (method_exists($eventClass, 'fromArray')) {
-            $eventData = $data['data'] ?? $data;
-
-            if (isset($eventData['type'])) {
-                unset($eventData['type']);
-            }
-
-            return $eventClass::fromArray($eventData);
+        if (isset($payload['user_agent'])) {
+            $event->setUserAgent($payload['user_agent']);
         }
 
-        try {
-            $reflection = new \ReflectionClass($eventClass);
-            $constructor = $reflection->getConstructor();
-
-            if (! $constructor) {
-                return $reflection->newInstance();
-            }
-
-            $params = [];
-            foreach ($constructor->getParameters() as $param) {
-                $paramName = $param->getName();
-                $params[] = $data['data'][$paramName] ?? $data[$paramName] ?? null;
-            }
-
-            return $reflection->newInstanceArgs($params);
-
-        } catch (\Throwable $e) {
-            $this->logger->error('Failed to create event: ' . $e->getMessage());
-
-            return null;
-        }
+        return $event;
     }
 }
