@@ -13,7 +13,8 @@ class OutboxWorker extends Command
 {
     protected $signature = 'outbox:worker
         {--sleep=1 : Seconds to sleep between iterations}
-        {--limit=0 : Max messages to process}';
+        {--limit=0 : Max messages to process}
+        {--maxAttempts= 3: Max Attempts}';
 
     protected $description = 'Process Outbox messages';
 
@@ -32,6 +33,7 @@ class OutboxWorker extends Command
         $processed = 0;
         $sleep = $this->getSafeIntOption('sleep', 1);
         $limit = $this->getSafeIntOption('limit', 0);
+        $maxAttempts = $this->getSafeIntOption('maxAttempts', 0);
 
         while (true) {
             try {
@@ -61,8 +63,10 @@ class OutboxWorker extends Command
             } catch (\Throwable $e) {
                 $this->logger->error("Worker error: {$e->getMessage()}");
 
-                if (isset($message)) {
-                    $this->outbox->incrementAttempts($message->id, $e->getMessage());
+                $this->outbox->incrementAttempts($message->id, $e->getMessage());
+
+                if ($message->attempts + 1 >= $maxAttempts) {
+                    $this->outbox->markAsFailed($message->id, $e->getMessage());
                 }
 
                 sleep(2);

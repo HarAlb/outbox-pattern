@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Src\Interfaces\Http\Requests;
+namespace Src\Infrastructure\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
+ * @property string $name
  * @property string $email
  * @property string $password
+ * @property string|null $surname
  */
-class LoginRequest extends FormRequest
+class RegisterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,7 +31,9 @@ class LoginRequest extends FormRequest
     {
         return [
             'email' => 'required|string|email',
-            'password' => 'required|min:6',
+            'name' => 'required|string',
+            'surname' => 'nullable|string|max:255',
+            'password' => 'required|confirmed',
         ];
     }
 }
