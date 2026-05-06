@@ -5,13 +5,9 @@ declare(strict_types=1);
 namespace Tests\Unit\Application\User;
 
 use PHPUnit\Framework\TestCase;
-use Src\Application\Auth\LoginCommand;
-use Src\Application\Auth\Responses\TokenResponse;
+use Src\Application\Auth\Contracts\TokenServiceInterface;
 use Src\Application\Auth\UseCases\LoginUser;
-use Src\Domain\User\Entities\User;
-use Src\Domain\User\Entities\ValueObject\Password;
 use Src\Domain\User\Repositories\UserRepository;
-use Src\Shared\Contracts\TokenServiceInterface;
 
 class LoginUserTest extends TestCase
 {

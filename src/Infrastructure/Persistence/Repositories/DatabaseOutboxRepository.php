@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Src\Infrastructure\Persistence;
+namespace Src\Infrastructure\Persistence\Repositories;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Src\Shared\Events\DomainEvent;
-use Src\Shared\Outbox\Entities\OutboxMessage;
-use Src\Shared\Outbox\Repositories\OutboxRepository;
+use Src\Domain\Outbox\Entities\OutboxMessage;
+use Src\Domain\Outbox\Repositories\OutboxRepository;
+use Src\Domain\Shared\Events\DomainEvent;
 
 final class DatabaseOutboxRepository implements OutboxRepository
 {

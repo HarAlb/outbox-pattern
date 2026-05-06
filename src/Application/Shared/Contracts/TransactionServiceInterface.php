@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Src\Shared\Contracts;
+namespace Src\Application\Shared\Contracts;
 
 interface TransactionServiceInterface
 {

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Src\Infrastructure\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Src\Shared\Contracts\TransactionServiceInterface;
-use Src\Shared\Services\TransactionService;
+use Src\Application\Shared\Contracts\TransactionServiceInterface;
+use Src\Infrastructure\Persistence\TransactionService;
 
 final class TransactionServiceProvider extends ServiceProvider
 {

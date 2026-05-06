@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace Tests\Unit\Application\User;
 
 use PHPUnit\Framework\TestCase;
+use Src\Application\Auth\Contracts\TokenServiceInterface;
 use Src\Application\Auth\RegisterCommand;
 use Src\Application\Auth\Responses\TokenResponse;
 use Src\Application\Auth\Responses\UserResponse;
 use Src\Application\Auth\Responses\UserWithTokenResponse;
 use Src\Application\Auth\UseCases\RegisterUser;
+use Src\Application\Shared\Contracts\TransactionServiceInterface;
 use Src\Domain\Common\ValueObject\Id;
+use Src\Domain\Outbox\Repositories\OutboxRepository;
 use Src\Domain\User\Entities\User;
 use Src\Domain\User\Events\UserRegistered;
 use Src\Domain\User\Repositories\UserRepository;
-use Src\Shared\Contracts\TokenServiceInterface;
-use Src\Shared\Contracts\TransactionServiceInterface;
-use Src\Shared\Outbox\Repositories\OutboxRepository;
 
 class RegisterUserTest extends TestCase
 {

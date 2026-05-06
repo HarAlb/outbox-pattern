@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Src\Shared\Outbox\Entities;
+namespace Src\Domain\Outbox\Entities;
 
 final class OutboxMessage
 {

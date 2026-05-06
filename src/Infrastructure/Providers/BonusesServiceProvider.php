@@ -8,7 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use Src\Domain\User\Events\UserRegistered;
 use Src\Domain\UserBonus\Listeners\GiveRegistrationBonusListener;
 use Src\Domain\UserBonus\Repositories\UserBonusesRepository;
-use Src\Infrastructure\Persistence\DatabaseUserBonusesRepository;
+use Src\Infrastructure\Persistence\Repositories\DatabaseUserBonusesRepository;
 
 final class BonusesServiceProvider extends ServiceProvider
 {

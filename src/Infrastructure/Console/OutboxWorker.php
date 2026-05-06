@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Src\Infrastructure\Console;
 
 use Illuminate\Console\Command;
+use Src\Domain\Outbox\Repositories\OutboxRepository;
 use Src\Infrastructure\Events\OutboxEventDispatcher;
 use Src\Infrastructure\Logging\OutboxLogger;
-use Src\Shared\Outbox\Repositories\OutboxRepository;
 
 class OutboxWorker extends Command
 {
