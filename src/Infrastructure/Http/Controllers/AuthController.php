@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Src\Interfaces\Http\Controllers;
+namespace Src\Infrastructure\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
@@ -11,8 +11,9 @@ use Src\Application\Auth\LoginCommand;
 use Src\Application\Auth\RegisterCommand;
 use Src\Application\Auth\UseCases\LoginUser;
 use Src\Application\Auth\UseCases\RegisterUser;
-use Src\Interfaces\Http\Requests\LoginRequest;
-use Src\Interfaces\Http\Requests\RegisterRequest;
+use Src\Infrastructure\Http\Requests\LoginRequest;
+use Src\Infrastructure\Http\Requests\RegisterRequest;
+use function response;
 
 final class AuthController extends Controller
 {

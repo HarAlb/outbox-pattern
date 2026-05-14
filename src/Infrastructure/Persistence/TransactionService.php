@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Src\Shared\Services;
+namespace Src\Infrastructure\Persistence;
 
 use Illuminate\Support\Facades\DB;
-use Src\Shared\Contracts\TransactionServiceInterface;
+use Src\Application\Shared\Contracts\TransactionServiceInterface;
 
 final class TransactionService implements TransactionServiceInterface
 {

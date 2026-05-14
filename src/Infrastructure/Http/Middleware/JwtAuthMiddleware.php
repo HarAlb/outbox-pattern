@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Src\Interfaces\Http\Middleware;
+namespace Src\Infrastructure\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
 use Src\Domain\Common\ValueObject\Id;
 use Src\Domain\User\Repositories\UserRepository;
 use Tymon\JWTAuth\JWT;
+use function response;
 
 final class JwtAuthMiddleware
 {

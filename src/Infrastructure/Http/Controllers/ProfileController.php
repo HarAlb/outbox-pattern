@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Src\Interfaces\Http\Controllers;
+namespace Src\Infrastructure\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use OpenApi\Attributes as OAT;
 use Src\Application\Auth\Responses\UserResponse;
+use function response;
 
 final class ProfileController extends Controller
 {

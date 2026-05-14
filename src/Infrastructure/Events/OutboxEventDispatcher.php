@@ -6,11 +6,11 @@ namespace Src\Infrastructure\Events;
 
 use Illuminate\Contracts\Container\Container;
 use Src\Domain\Common\ValueObject\Id;
+use Src\Domain\Outbox\Entities\OutboxMessage;
+use Src\Domain\Shared\Events\DomainEvent;
 use Src\Domain\User\Entities\ValueObject\Email;
 use Src\Domain\User\Events\UserRegistered;
 use Src\Infrastructure\Logging\OutboxLogger;
-use Src\Shared\Events\DomainEvent;
-use Src\Shared\Outbox\Entities\OutboxMessage;
 
 final class OutboxEventDispatcher
 {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Src\Shared\Outbox\Repositories;
+namespace Src\Domain\Outbox\Repositories;
 
-use Src\Shared\Events\DomainEvent;
-use Src\Shared\Outbox\Entities\OutboxMessage;
+use Src\Domain\Outbox\Entities\OutboxMessage;
+use Src\Domain\Shared\Events\DomainEvent;
 
 interface OutboxRepository
 {

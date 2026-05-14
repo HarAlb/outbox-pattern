@@ -1,6 +1,6 @@
 <?php
 
-namespace Src\Shared\Events;
+namespace Src\Domain\Shared\Events;
 
 abstract class DomainEvent
 {

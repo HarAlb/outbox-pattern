@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Src\Infrastructure\Console;
 
 use Illuminate\Console\Command;
-use Src\Shared\Outbox\Repositories\OutboxRepository;
+use Src\Domain\Outbox\Repositories\OutboxRepository;
 
 class OutboxMonitor extends Command
 {

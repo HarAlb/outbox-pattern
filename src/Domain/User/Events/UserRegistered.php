@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Src\Domain\User\Events;
 
 use Src\Domain\Common\ValueObject\Id;
+use Src\Domain\Shared\Events\DomainEvent;
 use Src\Domain\User\Entities\ValueObject\Email;
-use Src\Shared\Events\DomainEvent;
 
 final class UserRegistered extends DomainEvent
 {

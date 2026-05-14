@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Src\Shared\Outbox\Entities;
+namespace Src\Domain\Outbox\Entities;
 
 final class OutboxMessage
 {
@@ -15,7 +15,6 @@ final class OutboxMessage
         public ?string $error = null,
         public ?\DateTimeImmutable $processedAt = null,
         public ?\DateTimeImmutable $failedAt = null,
-        // Новые поля для трассировки
         public ?string $aggregateId = null,
         public ?string $correlationId = null
     ) {}

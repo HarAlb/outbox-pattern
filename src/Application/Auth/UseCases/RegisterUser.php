@@ -2,9 +2,12 @@
 
 namespace Src\Application\Auth\UseCases;
 
+use Src\Application\Auth\Contracts\TokenServiceInterface;
 use Src\Application\Auth\RegisterCommand;
 use Src\Application\Auth\Responses\UserResponse;
 use Src\Application\Auth\Responses\UserWithTokenResponse;
+use Src\Application\Shared\Contracts\TransactionServiceInterface;
+use Src\Domain\Outbox\Repositories\OutboxRepository;
 use Src\Domain\User\Entities\User;
 use Src\Domain\User\Entities\ValueObject\Email;
 use Src\Domain\User\Entities\ValueObject\Name;
@@ -13,18 +16,17 @@ use Src\Domain\User\Entities\ValueObject\Surname;
 use Src\Domain\User\Events\UserRegistered;
 use Src\Domain\User\Exceptions\EmailAlreadyExistsException;
 use Src\Domain\User\Repositories\UserRepository;
-use Src\Shared\Contracts\TokenServiceInterface;
-use Src\Shared\Contracts\TransactionServiceInterface;
-use Src\Shared\Outbox\Repositories\OutboxRepository;
 
 final class RegisterUser
 {
     public function __construct(
-        private UserRepository $users,
-        private OutboxRepository $outbox,
-        private TransactionServiceInterface $transaction,
-        private TokenServiceInterface $tokens,
-    ) {}
+        private readonly UserRepository              $users,
+        private readonly OutboxRepository            $outbox,
+        private readonly TransactionServiceInterface $transaction,
+        private readonly TokenServiceInterface       $tokens,
+    )
+    {
+    }
 
     public function execute(RegisterCommand $command): UserWithTokenResponse
     {
@@ -44,7 +46,7 @@ final class RegisterUser
 
             $event = new UserRegistered($savedUser->getId(), $savedUser->getEmail());
 
-            $this->outbox->store($event, (string) $savedUser->getid()->getValue(), null);
+            $this->outbox->store($event, (string)$savedUser->getid()->getValue(), null);
 
             $token = $this->tokens->generate($savedUser);
 

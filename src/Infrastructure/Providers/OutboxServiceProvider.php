@@ -3,8 +3,8 @@
 namespace Src\Infrastructure\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Src\Infrastructure\Persistence\DatabaseOutboxRepository;
-use Src\Shared\Outbox\Repositories\OutboxRepository;
+use Src\Domain\Outbox\Repositories\OutboxRepository;
+use Src\Infrastructure\Persistence\Repositories\DatabaseOutboxRepository;
 
 final class OutboxServiceProvider extends ServiceProvider
 {

@@ -2,13 +2,13 @@
 
 namespace Src\Application\Auth\UseCases;
 
+use Src\Application\Auth\Contracts\TokenServiceInterface;
 use Src\Application\Auth\Exceptions\InvalidCredentialsException;
 use Src\Application\Auth\LoginCommand;
 use Src\Application\Auth\Responses\UserResponse;
 use Src\Application\Auth\Responses\UserWithTokenResponse;
 use Src\Domain\User\Entities\ValueObject\Email;
 use Src\Domain\User\Repositories\UserRepository;
-use Src\Shared\Contracts\TokenServiceInterface;
 
 final class LoginUser
 {

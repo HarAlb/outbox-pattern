@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Src\Shared\Contracts;
+namespace Src\Application\Auth\Contracts;
 
 use Src\Application\Auth\Responses\TokenResponse;
 use Src\Domain\User\Entities\User;

@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Src\Shared\Services;
+namespace Src\Infrastructure\Auth;
 
 use Carbon\Carbon;
+use Src\Application\Auth\Contracts\TokenServiceInterface;
 use Src\Application\Auth\Responses\TokenResponse;
 use Src\Domain\User\Entities\User;
-use Src\Infrastructure\Auth\JwtUserAdapter;
-use Src\Shared\Contracts\TokenServiceInterface;
 use Tymon\JWTAuth\JWT;
 
 final class TokenService implements TokenServiceInterface

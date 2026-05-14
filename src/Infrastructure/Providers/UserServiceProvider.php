@@ -4,7 +4,7 @@ namespace Src\Infrastructure\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Src\Domain\User\Repositories\UserRepository;
-use Src\Infrastructure\Persistence\DatabaseUserRepository;
+use Src\Infrastructure\Persistence\Repositories\DatabaseUserRepository;
 
 final class UserServiceProvider extends ServiceProvider
 {

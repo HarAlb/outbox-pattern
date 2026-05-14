@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Src\Infrastructure\Persistence;
+namespace Src\Infrastructure\Persistence\Repositories;
 
 use Illuminate\Support\Facades\DB;
 use Src\Domain\Common\ValueObject\Id;

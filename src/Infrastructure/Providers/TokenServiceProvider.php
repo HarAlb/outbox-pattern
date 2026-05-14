@@ -3,8 +3,8 @@
 namespace Src\Infrastructure\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Src\Shared\Contracts\TokenServiceInterface;
-use Src\Shared\Services\TokenService;
+use Src\Application\Auth\Contracts\TokenServiceInterface;
+use Src\Infrastructure\Auth\TokenService;
 
 final class TokenServiceProvider extends ServiceProvider
 {
